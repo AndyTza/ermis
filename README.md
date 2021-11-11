@@ -1,3 +1,3 @@
 # Ermis
 
-A toy example of injecting astrophysical transients in the sky
+Welcome to Ermis. An open-source algorithm for sampling astronomical transients via the use of photometric models.
