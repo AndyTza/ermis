@@ -6,7 +6,7 @@ import os
 if not sys.warnoptions:
     warnings.simplefilter("ignore")
 
-class model:
+class photometricmodel:
     def __init__(self, time):
         self.time = time
 
