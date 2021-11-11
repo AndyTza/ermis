@@ -9,5 +9,6 @@
 - Magnitude error (AB) -> flux error
 - flux error - magnitude error (AB)
 - Extinction calculator
+- ... other tools?
 
 """
