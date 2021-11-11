@@ -55,3 +55,7 @@ class model:
         model += np.random.normal(0, np.sqrt(noise)) #add some random noise
 
         return model
+
+
+# WIP:
+# > Add some physical constraints to the model (i.e distance modulus)
