@@ -1,6 +1,8 @@
 import matplotlib.pyplot as plt
-from .models import photometricmodel
-
+import sys
+sys.path.append('../gensky')
+from models import photometricmodel
+import numpy as np
 
 def plot_v19():
     times = np.linspace(-50, 50, 10000)
@@ -19,5 +21,22 @@ def plot_sho():
     plt.plot(times, M)
     plt.show()
 
-plot_v19()
-plot_sho()
+def plot_sine():
+    t = np.linspace(0, 10, 5200)
+    F = photometricmodel(t).fourier_sine(1,
+            np.array([1, 0.55, 1]), # amps
+            np.array([1, 2.0, 1]), # k
+            np.array([1, -4.5, 1]), 5)
+    plt.plot(t, F)
+    plt.show()
+
+
+
+def main():
+    """ display all our models"""
+    plot_v19()
+    plot_sine()
+    plot_sho()
+
+if __name__ == "__main__":
+    main()

@@ -1,3 +1,6 @@
 dummy_func.py
-__pyarche__
+/__pyarche__
+__pycache__
+*.pyc
+.DS_Store
 

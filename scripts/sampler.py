@@ -10,9 +10,20 @@ from astropy.io import ascii
 from astropy.time import Time
 import numpy as np
 from astropy.coordinates import SkyCoord
+import generator as generator
+import models as phot_models
+import astro_tools
+import dummy_functions as dummy
 
 
-# LSST constants from https://smtn-002.lsst.io/
-lsst_bands = ['u', 'g', 'r', 'i', 'z', 'y']
-m5_limiting = [23.87, 24.82, 24.36, 23.93, 23.36, 22.47]
-filter_zeropoint = [27.03, 28.38, 28.16, 27.85, 27.46, 26.68]
+'''
+Sampler will consist of a fetching funciton that will do a quick query to to the
+epoch matching. Can also enable modes of searching
+'''
+
+
+
+class simulation:
+    def __init__(self, table):
+        self.table = table
+    

@@ -82,7 +82,21 @@ def fetch_cadence_info(table, ra, dec, filter_band='all' , fov=3.5):
     else:
         return table[np.where((delta_sep<=max_seperation) & (table['filter']==filter_band))]
 
-def simple_mjd_sampler():
-    """ Given a range of dates, this funciton will return the cadence for a given field under a time-seperation"""
+def simple_mjd_sampler(table, time_separation=365, mode='random'):
+    """ Given a range of dates, this funciton will return the cadence for a given field under a time-seperation.
 
+        Input
+        -----
+        table (astropy.table): simulation data (ideally restricted to specific field and bands)
+        time_separation (int): the time you want to query data
+        mode (str): How each time query will be performed:
+                    random: will randomly select a range of dates that satisfied max(T)-min(T)=time_separation
+                    start_end: will select a range of dates starting from the first pointing of the simulation
+
+        Output
+        ------
+        table (astropy.table): simulation data at specified time mode
+    """
+
+    mjd_times = Time(table['mjd'], format='mjd') # survey times
     
