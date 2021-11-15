@@ -99,4 +99,3 @@ def simple_mjd_sampler(table, time_separation=365, mode='random'):
     """
 
     mjd_times = Time(table['mjd'], format='mjd') # survey times
-    
