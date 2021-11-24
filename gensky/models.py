@@ -2,6 +2,7 @@ import numpy as np
 import sys
 import warnings
 import os
+import dummy_func
 
 if not sys.warnoptions:
     warnings.simplefilter("ignore")
@@ -35,21 +36,56 @@ class photometricmodel:
                         )
         return (y)
 
-    def fourier_sine(self, m0, amps, ks, phi, T):
+    @staticmethod
+    def cos_fouri(time, amp, index, phase, period, t0):
+        chi = np.modf((time-t0)/period)[0]
+        return amp*np.cos(2*np.pi*index*chi + phase)
+
+    @staticmethod
+    def sin_fouri(time, amp, index, phase, period, t0):
+        chi = np.modf((time-t0)/period)[0]
+        return amp*np.sin(2*np.pi*index*chi + phase)
+
+    @staticmethod
+    def sin_cos_combo(time, ai, bi, index, period, t0):
+        c = (time-t0)/period
+        chi = c - c.astype(int)
+        return ai*np.cos(2*np.pi*index*chi) + bi*np.sin(2*np.pi*index*chi)
+
+    def fourier_eb(self, theta, nfc=4):
+        """Calculates the combined cosine and sine fourier series function.
+
+           Input
+           -----
+           m0 (float): offset flux/magnitude of source
+           ...
+           ....
+
+        """
+        m0 = theta[0]
+        Ai, Bi = theta[1], theta[2] # amplitudes
+        P, T0 = theta[3], theta[4]
+
+        # Evaluate model
+        model = np.zeros(shape=np.shape(self.time)) # model
+        for i in range(1, nfc+1):
+            model += self.sin_cos_combo(self.time, Ai[i-1], Bi[i-1], i, P, T0)
+
+        return m0 + model
+
+    def fourier(self, theta, nfc=3, mode='sin'):
         """ Calculate the sine fourier series for N fourier terms (*modified to also include the period).
 
             Input
             -----
-            self.time (float or numpy.ndarray): observed times
             m0 (float): average baseline value of function
             amps (float or list): list of amplitudes of each sine component
-            ks (float or list): k-index of each sine component
             phi (float or list): phases of each sine component
             T (float): Period of total sine curve
 
             Output
             ------
-            fourier_sine (numpy.array): array of the fourier sine funcuntion (for N components)
+            fourier_cos (numpy.array): array of the fourier sine funcuntion (for N components)
 
 
             Example
@@ -64,9 +100,20 @@ class photometricmodel:
                          5) # Period of curve
         """
 
-        F = np.array([np.sum(amps*np.sin((2*np.pi*ks*time)/T + phi)) for time in self.time])
+        # Unpack model parameters
+        m0, amps, phases = theta[0], theta[1], theta[2]
+        period, t0 = theta[3], theta[4]
 
-        return (m0 + F)
+        model = np.zeros(shape=np.shape(self.time)) # model
+        if mode=='sin':
+            for i in range(1, nfc+1):
+                model += self.sin_fouri(self.time, amps[i-1], i, phases[i-1], period, t0)
+        elif mode=='cos':
+            for i in range(1, nfc+1):
+                model += self.cos_fouri(self.time, amps[i-1], i, phases[i-1], period, t0)
+
+        return (m0 + model)
+
 
     def sho(self, theta, noise=0.1):
         """ Return a simple harmonic oscillator function of the functional form:
